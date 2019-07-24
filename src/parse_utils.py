@@ -1,2 +1,2 @@
 def parse_date():
-    pass
+    return 'This is a passed test man'
