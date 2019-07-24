@@ -1,10 +1,10 @@
 from src.parse_utils import parse_date
 
 # Files
-fpersonal = 'src/data/personal_info.csv'
-femployment = 'src/data/employment.csv'
-fvehicles = 'src/data/vehicles.csv'
-fupdate_status = 'src/data/update_status.csv'
+fpersonal = 'data/personal_info.csv'
+femployment = 'data/employment.csv'
+fvehicles = 'data/vehicles.csv'
+fupdate_status = 'data/update_status.csv'
 fnames = fpersonal, femployment, fvehicles, fupdate_status
 
 # Parsers

@@ -21,8 +21,8 @@ def read_file_rows(file_names, lines: int):
 def header_extract(file_names):
     for file_name in file_names:
         with open(file_name) as f:
-            header = reader(f, delimiter=',', quotechar='"')
-            yield next(header)
+            file_line = reader(f, delimiter=',', quotechar='"')
+            yield next(file_line)
     # with open(self.filename) as file:
     #     next(file)
     #     data_string = next(file).strip('\n')
@@ -30,18 +30,26 @@ def header_extract(file_names):
     #     self.infer_data_type()
 
 
-# TODO: refactor this so it takes a single row and a data_type_key
-def cast(single_data_value, data_value):
-    if single_data_value is None:
-        return None
-    elif single_data_value == 'float':
-        return float(data_value)
-    elif single_data_value == 'int':
-        return int(data_value)
-    else:
-        if len(str(data_value)) is 0:
+def data_row_extract(file_names):
+    for file_name in file_names:
+        with open(file_name) as f:
+            file_line = reader(f, delimiter=',', quotechar='"')
+            next(file_line)
+            yield next(file_line)
+
+
+def cast_data_row(data_row, data_type_key):
+    for element, data_key in data_row, data_type_key:
+        if element is None:
             return None
-        return str(data_value)
+        elif data_key == 'float':
+            return float(element)
+        elif data_key == 'int':
+            return int(element)
+        else:
+            if len(str(element)) is 0:
+                return None
+            return str(element)
 
 # def date_modifier(date_string: str) -> date:
 #     date_list = date_string.split('/')
