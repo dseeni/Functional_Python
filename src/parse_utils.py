@@ -1,6 +1,7 @@
 from itertools import islice
 from csv import reader
-from datetime import date
+from datetime import datetime
+
 
 # read file as csv
 def read_file(file_name):
@@ -21,7 +22,7 @@ def header_extract(file_names):
     for file_name in file_names:
         with open(file_name) as f:
             header = reader(f, delimiter=',', quotechar='"')
-            return header
+            yield next(header)
     # with open(self.filename) as file:
     #     next(file)
     #     data_string = next(file).strip('\n')
@@ -29,8 +30,7 @@ def header_extract(file_names):
     #     self.infer_data_type()
 
 
-
-
+# TODO: refactor this so it takes a single row and a data_type_key
 def cast(single_data_value, data_value):
     if single_data_value is None:
         return None
@@ -58,8 +58,6 @@ def cast(single_data_value, data_value):
 #     return date_object
 
 
-
-
 # def infer_data_type(self):
 #     for value in self.data_key:
 #         if value is None:
@@ -76,5 +74,6 @@ def cast(single_data_value, data_value):
 #         else:
 #             self.data_key[self.data_key.index(value)] = str(value)
 
-def parse_date():
-    return 'temp_date'
+
+def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
+    return datetime.strptime(value, fmt)
