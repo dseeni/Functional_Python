@@ -4,20 +4,21 @@ from datetime import datetime
 
 
 # read file as csv
-def read_file(file_name):
+def read_csv_file(file_name):
     with open(file_name) as f:
         rows = reader(f, delimiter=',', quotechar='"')
-        yield from rows
+        yield rows
 
 
 # read N lines for file in fnames
-def read_file_rows(file_names, lines: int):
+def row_csv_extract(file_names, lines: int):
     for file in file_names:
-        rows = read_file(file)
+        rows = read_csv_file(file)
         for row in islice(rows, lines):
             print(row)
 
 
+# extract header files
 def header_extract(file_names):
     for file_name in file_names:
         with open(file_name) as f:
