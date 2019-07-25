@@ -38,18 +38,19 @@ def data_row_extract(file_names):
             yield next(file_line)
 
 
-def cast_data_row(data_row, data_type_key):
-    for element, data_key in data_row, data_type_key:
-        if element is None:
+def cast(element, data_type):
+    if element is None:
+        return None
+    elif data_type == float:
+        return float(element)
+    elif data_type == int:
+        return int(element)
+    elif data_type == parse_date:
+        return parse_date(element)
+    else:
+        if len(str(element)) is 0:
             return None
-        elif data_key == 'float':
-            return float(element)
-        elif data_key == 'int':
-            return int(element)
-        else:
-            if len(str(element)) is 0:
-                return None
-            return str(element)
+        return str(element)
 
 # def date_modifier(date_string: str) -> date:
 #     date_list = date_string.split('/')
