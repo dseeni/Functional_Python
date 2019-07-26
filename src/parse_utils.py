@@ -2,6 +2,8 @@ from itertools import islice
 from csv import reader
 from datetime import datetime
 from collections import namedtuple
+from itertools import starmap
+
 
 # f to open file read lines -> yield line - Done
 # f open files and read n lines -> yield lines - Done
@@ -50,31 +52,31 @@ def create_named_tuple_class(class_name, file_name):
     return namedtuple(class_name, fields)
 
 
+def zip_type_key(data_row, type_key):
+    return tuple(zip(data_row, type_key))
+
+
+# cast row based on zip type key and row, as well as date format func -> return clean row tuple
+def cast_zipped_row(zipped_row):
+    def cast(value, data_type):
+        if len(str(value)) == 0 or str(value).isspace():
+            return None
+        typedict = {None: None,
+                    float: lambda x: float(x),
+                    int: lambda x: int(x),
+                    parse_date: lambda x: parse_date(x),
+                    str: lambda x: str(x)}
+        return typedict[data_type](value)
+    castedrow = tuple(starmap(cast, zipped_row))
+    return castedrow
+
+
+def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
+    return datetime.strptime(value, fmt)
+
+
 def iter_file(fname, class_name, parser):
     nt_class = create_named_tuple_class(fname, class_name)
     for row in csv_reader(fname):
         parsed_data = (cast(element, data_type) for element, data_type in zip(row, parser))
         yield nt_class(*parsed_data)
-
-
-def zip_type_key(data_row, type_key):
-    return tuple(zip(data_row, type_key))
-
-
-def cast(element, data_type):
-    if element is None:
-        return None
-    elif data_type == float:
-        return float(element)
-    elif data_type == int:
-        return int(element)
-    elif data_type == parse_date:
-        return parse_date(element)
-    else:
-        if len(str(element)) is 0:
-            return None
-        return str(element)
-
-
-def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
-    return datetime.strptime(value, fmt)
