@@ -8,8 +8,8 @@ def test_pass_default():
 
 
 def test_header_extract():
-    headers = list(header_extract(fnames))
+    headers = list(header_extract(fnames[0]))
     print(headers)
-    assert len(headers) == 4
-    assert headers[0][0] == 'ssn'
+    assert len(headers) == 5
+    assert headers[0] == 'ssn'
 
