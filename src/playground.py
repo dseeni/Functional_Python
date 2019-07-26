@@ -1,26 +1,28 @@
 from src.parse_utils import *
 from src.constants import *
-import os
-from itertools import chain
-from collections import namedtuple
+from itertools import starmap
 
-headers = list(header_extract(fnames))
-print(headers)
-# print(len(headers))
-# print(list(data_row_extract(fnames)))
-final_rows_data_types = [list(zip(list(data_row_extract(fnames))[i], parsers[i])) for i in range(len(parsers))]
-print(final_rows_data_types)
+# row = iter_file(fnames[0], 'personal_info', parsers[0])
+# for rows in csv_reader(fnames[0]):
+#     print(next(row))
 
-data = [cast(i[0], i[1]) for i in final_rows_data_types for j in i]
-# print(final_rows_data_types)
-# print(data)
+# row_csv_extract(fnames[0], 3)
+# rows_csv_extract(fnames, 3)
+Personal_Info = create_named_tuple_class('Personal_Info', fnames[0])
+row = data_row_extract(fnames[0])
+# print(next(row))
+# print(zip_type_key(next(row), parsers[0]))
+# print(zip_type_key(next(row), parsers[0]))
+# print(zip_type_key(row, parsers[0]))
+# print(zip_type_key(row, parsers[0]))
+# print(tuple(header_extract(fnames[0])))
 
-# namedtuples =  [namedtuple('final_data_row', header) for header in headers]
-# for i in range(len(final_rows)):
-#     finalnamed = namedtuples[i]
-#     finalrownamed = finalnamed(*final_rows[i])
-#     print(*finalrownamed, sep='\n')
+zipped_row = zip_type_key(next(row), parsers[0])
+print(zipped_row)
+print(cast_zipped_row(zipped_row))
 
-
+print(list(iter_file(fnames[0], 'Personal_Info', parsers[0])))
+print(len(list(iter_file(fnames[0], 'Personal_Info', parsers[0]))))
+# assert list(parsers[0]) == list(type(i) for i in cast_zipped_row(zipped_row))
 
 

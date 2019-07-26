@@ -1,89 +1,73 @@
 from itertools import islice
 from csv import reader
 from datetime import datetime
+from collections import namedtuple
+from itertools import starmap
 
 
-# read file as csv
-def read_csv_file(file_name):
+# f to open file read lines -> yield line - Done
+# f open files and read n lines -> yield lines - Done
+# extract header of file -> return header tuple - Done
+# create named tuple based on header -> return named tuple - Done
+# date formatter -> returns date obj with proper format - Done
+# zip_data_key -> returns data row zipped with parse key - Done
+# cast row based on zip type key and row, as well as date format func -> return clean row tuple
+# iter file takes clean row and named tuple -> returns instanced named tuple with clean data
+
+
+# read lines from csv
+def csv_reader(file_name):
     with open(file_name) as f:
         rows = reader(f, delimiter=',', quotechar='"')
-        yield rows
+        yield from rows
 
 
-# read N lines for file in fnames
-def row_csv_extract(file_names, lines: int):
+# read n lines from a single file
+def row_csv_extract(file, lines: int):
+    for row in islice(csv_reader(file), lines):
+        yield row
+
+
+# read n lines from multiple files
+def rows_csv_extract(file_names, lines: int):
     for file in file_names:
-        rows = read_csv_file(file)
-        for row in islice(rows, lines):
-            print(row)
+        for row in islice(csv_reader(file), lines):
+            yield row
 
 
-# extract header files
-def header_extract(file_names):
-    for file_name in file_names:
-        with open(file_name) as f:
-            file_line = reader(f, delimiter=',', quotechar='"')
-            yield next(file_line)
-    # with open(self.filename) as file:
-    #     next(file)
-    #     data_string = next(file).strip('\n')
-    #     self.data_key = data_string.split(',')
-    #     self.infer_data_type()
+# extract header row
+def header_extract(file_name):
+    return tuple(next(csv_reader(file_name)))
 
 
-def data_row_extract(file_names):
-    for file_name in file_names:
-        with open(file_name) as f:
-            file_line = reader(f, delimiter=',', quotechar='"')
-            next(file_line)
-            yield next(file_line)
+def data_row_extract(file_name):
+    data_rows = csv_reader(file_name)
+    next(data_rows)
+    yield from data_rows
 
 
-def cast(element, data_type):
-    if element is None:
-        return None
-    elif data_type == float:
-        return float(element)
-    elif data_type == int:
-        return int(element)
-    elif data_type == parse_date:
-        return parse_date(element)
-    else:
-        if len(str(element)) is 0:
-            return None
-        return str(element)
-
-# def date_modifier(date_string: str) -> date:
-#     date_list = date_string.split('/')
-#     # noinspection PyUnusedLocal
-#     date_format_key = ['int' for i in range(3)]
-#     print('121:', 'date_format_key ''='' ', date_format_key)
-#     finaldate = [FileReader.cast(date_format_key, date_list)
-#                  for date_format_key, date_list in zip(date_format_key, date_list)]
-#     assert all(isinstance(i, int) for i in finaldate)
-#     date_object = date(finaldate[2], finaldate[0], finaldate[1])
-#     # assert date_object.year == 2016
-#     # assert date_object.month == 5
-#     # assert date_object.day == 10
-#     return date_object
+# class_name = name of the file personal_info, employment, etc
+def create_named_tuple_class(class_name, file_name):
+    fields = header_extract(file_name)
+    return namedtuple(class_name, fields)
 
 
-# def infer_data_type(self):
-#     for value in self.data_key:
-#         if value is None:
-#             self.data_key[self.data_key.index(value)] = None
-#         elif all(c.isdigit() for c in value):
-#             self.data_key[self.data_key.index(value)] = int(value)
-#
-#         elif value.count('.') == 1:
-#             try:
-#                 self.data_key[self.data_key.index(value)] = float(value)
-#             except ValueError:
-#                 self.data_key[self.data_key.index(value)] = str(value)
-#
-#         else:
-#             self.data_key[self.data_key.index(value)] = str(value)
+def zip_type_key(data_row, type_key):
+    return tuple(zip(data_row, type_key))
+
+
+# cast row based on zip type key and row, as well as date format func -> return clean row tuple
+def cast_zipped_row(zipped_row):
+    castedrow = tuple(parse_fn(value) for value, parse_fn in zipped_row)
+    return castedrow
 
 
 def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
     return datetime.strptime(value, fmt)
+
+
+def iter_file(fname, class_name, parser):
+    nt_class = create_named_tuple_class(class_name, fname)
+    for row in csv_reader(fname):
+        parsed_data = cast_zipped_row(zip_type_key(row, parser))
+        yield nt_class(*parsed_data)
