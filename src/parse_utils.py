@@ -38,11 +38,9 @@ def header_extract(file_name):
 
 
 def data_row_extract(file_name):
-    with open(file_name) as f:
-        file_line = reader(f, delimiter=',', quotechar='"')
-        # skip the header line
-        next(file_line)
-        yield next(file_line)
+    rows = csv_reader(file_name)
+    next(rows)
+    yield next(rows)
 
 
 # class_name = name of the file personal_info, employment, etc
@@ -59,7 +57,7 @@ def iter_file(fname, class_name, parser):
 
 
 def zip_type_key(data_row, type_key):
-    return tuple(zip(data_row, type_key))
+    return tuple(zip(*data_row, type_key))
 
 
 def cast(element, data_type):
