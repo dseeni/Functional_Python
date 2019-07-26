@@ -58,16 +58,7 @@ def zip_type_key(data_row, type_key):
 
 # cast row based on zip type key and row, as well as date format func -> return clean row tuple
 def cast_zipped_row(zipped_row):
-    def cast(value, data_type):
-        if len(str(value)) == 0 or str(value).isspace():
-            return None
-        typedict = {None: None,
-                    float: lambda x: float(x),
-                    int: lambda x: int(x),
-                    parse_date: lambda x: parse_date(x),
-                    str: lambda x: str(x)}
-        return typedict[data_type](value)
-    castedrow = tuple(starmap(cast, zipped_row))
+    castedrow = tuple(parse_fn(value) for value, parse_fn in zipped_row)
     return castedrow
 
 
@@ -76,7 +67,7 @@ def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
 
 
 def iter_file(fname, class_name, parser):
-    nt_class = create_named_tuple_class(fname, class_name)
+    nt_class = create_named_tuple_class(class_name, fname)
     for row in csv_reader(fname):
-        parsed_data = (cast(element, data_type) for element, data_type in zip(row, parser))
+        parsed_data = cast_zipped_row(zip_type_key(row, parser))
         yield nt_class(*parsed_data)
