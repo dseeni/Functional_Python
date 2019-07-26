@@ -71,3 +71,6 @@ def iter_file(fname, class_name, parser):
     for row in csv_reader(fname):
         parsed_data = cast_zipped_row(zip_type_key(row, parser))
         yield nt_class(*parsed_data)
+
+def iter_combine(fnames, class_names, parsers):
+    pass
