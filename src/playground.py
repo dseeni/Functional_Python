@@ -8,11 +8,14 @@ from src.constants import *
 # row_csv_extract(fnames[0], 3)
 # rows_csv_extract(fnames, 3)
 Personal_Info = create_named_tuple_class('Personal_Info', fnames[0])
-print(zip_type_key(data_row_extract(fnames[0]), parsers[0]))
 row = data_row_extract(fnames[0])
-print(next(row))
-# print(next(row))
+print(zip_type_key(next(row), parsers[0]))
+print(zip_type_key(next(row), parsers[0]))
+print(zip_type_key(next(row), parsers[0]))
+print(zip_type_key(next(row), parsers[0]))
+print(zip_type_key(next(row), parsers[0]))
 # print(zip_type_key(row, parsers[0]))
 # print(zip_type_key(row, parsers[0]))
 # print(tuple(header_extract(fnames[0])))
+
 

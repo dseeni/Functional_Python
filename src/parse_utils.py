@@ -8,6 +8,7 @@ from collections import namedtuple
 # extract header of file -> return header tuple - Done
 # create named tuple based on header -> return named tuple - Done
 # date formatter -> returns date obj with proper format - Done
+# zip_data_key -> returns data row zipped with parse key - Done
 # cast row based on zip type key and row, as well as date format func -> return clean row tuple
 # iter file takes clean row and named tuple -> returns instanced named tuple with clean data
 
@@ -22,14 +23,14 @@ def csv_reader(file_name):
 # read n lines from a single file
 def row_csv_extract(file, lines: int):
     for row in islice(csv_reader(file), lines):
-        print(row)
+        yield row
 
 
 # read n lines from multiple files
 def rows_csv_extract(file_names, lines: int):
     for file in file_names:
         for row in islice(csv_reader(file), lines):
-            print(row)
+            yield row
 
 
 # extract header row
@@ -38,9 +39,9 @@ def header_extract(file_name):
 
 
 def data_row_extract(file_name):
-    rows = csv_reader(file_name)
-    next(rows)
-    yield next(rows)
+    data_rows = csv_reader(file_name)
+    next(data_rows)
+    yield from data_rows
 
 
 # class_name = name of the file personal_info, employment, etc
@@ -57,7 +58,7 @@ def iter_file(fname, class_name, parser):
 
 
 def zip_type_key(data_row, type_key):
-    return tuple(zip(*data_row, type_key))
+    return tuple(zip(data_row, type_key))
 
 
 def cast(element, data_type):
