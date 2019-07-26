@@ -3,27 +3,38 @@ from csv import reader
 from datetime import datetime
 from collections import namedtuple
 
+# f to open file read lines -> yield line - Done
+# f open files and read n lines -> yield lines - Done
+# extract header of file -> return header tuple - Done
+# create named tuple based on header -> return named tuple - Done
+# date formatter -> returns date obj with proper format - Done
+# cast row based on zip type key and row, as well as date format func -> return clean row tuple
+# iter file takes clean row and named tuple -> returns instanced named tuple with clean data
 
-# read file as csv
+
+# read lines from csv
 def csv_reader(file_name):
     with open(file_name) as f:
         rows = reader(f, delimiter=',', quotechar='"')
         yield from rows
 
 
-# read N lines for file in fnames
-def row_csv_extract(file_names, lines: int):
+# read n lines from a single file
+def row_csv_extract(file, lines: int):
+    for row in islice(csv_reader(file), lines):
+        print(row)
+
+
+# read n lines from multiple files
+def rows_csv_extract(file_names, lines: int):
     for file in file_names:
-        rows = csv_reader(file)
-        for row in islice(rows, lines):
+        for row in islice(csv_reader(file), lines):
             print(row)
 
 
-# extract header files
+# extract header row
 def header_extract(file_name):
-    with open(file_name) as f:
-        file_line = reader(f, delimiter=',', quotechar='"')
-        return next(file_line)
+    return tuple(next(csv_reader(file_name)))
 
 
 def data_row_extract(file_name):
@@ -35,18 +46,20 @@ def data_row_extract(file_name):
 
 
 # class_name = name of the file personal_info, employment, etc
-def create_named_tuple_class(fname, class_name):
-    fields = header_extract(fname)
+def create_named_tuple_class(class_name, file_name):
+    fields = header_extract(file_name)
     return namedtuple(class_name, fields)
 
 
 def iter_file(fname, class_name, parser):
     nt_class = create_named_tuple_class(fname, class_name)
-    reader = csv_reader(fname)
-    for row in reader:
+    for row in csv_reader(fname):
         parsed_data = (cast(element, data_type) for element, data_type in zip(row, parser))
         yield nt_class(*parsed_data)
 
+
+def zip_type_key(data_row, type_key):
+    return tuple(zip(data_row, type_key))
 
 
 def cast(element, data_type):
