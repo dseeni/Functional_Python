@@ -82,3 +82,9 @@ def test_iter_combined_files():
     datarow = next(iter_combined_files(fnames, class_names, parsers, compress_fields))
     assert len(datarow) == 13
     assert datarow.ssn == '100-53-9824'
+
+
+def test_filter_iter_combined():
+    stale_records = list(filter_iter_combined(fnames, class_names, parsers, compress_fields,
+                                              key=lambda x: x.last_updated < cut_off_date))
+    assert len(stale_records) == 129

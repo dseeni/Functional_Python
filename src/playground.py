@@ -17,5 +17,14 @@ from itertools import starmap, chain
 row = next(iter_combined_files_data_row(fnames, class_names, parsers, compress_fields))
 
 
-print(*list(iter_combined_files(fnames, class_names, parsers, compress_fields)), sep='\n')
-print(len(list(iter_combined_files(fnames, class_names, parsers, compress_fields))))
+# print(*list(iter_combined_files(fnames, class_names, parsers, compress_fields)), sep='\n')
+# print(len(list(iter_combined_files(fnames, class_names, parsers, compress_fields))))
+
+
+# -------------- Goal_4 --------------
+stale_records = list(filter_iter_combined(fnames, class_names, parsers, compress_fields,
+                                          key=lambda x: x.last_updated < cut_off_date))
+
+print(*list(filter_iter_combined(fnames, class_names, parsers, compress_fields,
+                                 key=lambda x: x.last_updated < cut_off_date)), sep='\n')
+

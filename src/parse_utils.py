@@ -127,3 +127,12 @@ def iter_combined_files(file_names, class_names, parsers, compress_key):
         compressed_row = compress(row, compress_fields)
         yield combined_nt(*compressed_row)
 
+
+# -------------- Goal_3 --------------
+def filter_iter_combined(file_names, class_names, parsers, compress_key, *, key=None):
+    iter_combo = iter_combined_files(file_names, class_names, parsers, compress_key)
+    yield from filter(key, iter_combo)
+
+
+# -------------- Goal_4 --------------
+
