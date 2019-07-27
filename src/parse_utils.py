@@ -1,4 +1,4 @@
-from itertools import islice, compress, chain
+from itertools import islice, compress, chain, groupby
 from csv import reader
 from datetime import datetime
 from collections import namedtuple
@@ -136,3 +136,13 @@ def filter_iter_combined(file_names, class_names, parsers, compress_key, *, key=
 
 # -------------- Goal_4 --------------
 
+def group_data(file_names, class_names, parsers, compress_key, filter_key, group_key):
+    data = filter_iter_combined(file_names, class_names, parsers, compress_key, key=filter_key)
+    sorted_data = sorted(data, key=group_key)
+    groups = groupby(sorted_data, key=group_key)
+    group_counts = ((g[0], len(list(g[1]))) for g in groups)
+    return sorted(group_counts, key=lambda row: row[1], reverse=True)
+
+
+def filter_key_composite(cutoff_date, gender):
+    return lambda row: row.last_updated >= cutoff_date and row.gender == gender
