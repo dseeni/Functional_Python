@@ -14,15 +14,15 @@ vehicle_parser = (str, str, str, int)
 update_status_parser = (str, parse_date, parse_date)
 parsers = personal_parser, employment_parser, vehicle_parser, update_status_parser
 
-# Compression Key
-personal_compress = (True, True, True, True)
+# Compression Fileds Keys
+personal_compress = (True, True, True, True, True)
 employment_compress = (True, True, True, False)
 vehicle_compress = (False, True, True, True)
 update_status_compress = (False, True, True)
-parsers_compress = personal_compress, employment_compress, vehicle_compress, update_status_compress
+compress_fields = personal_compress, employment_compress, vehicle_compress, update_status_compress
 
 
-# Named Tuple Names
+# Named Tuple Class Names
 personal_class_name = 'Personal'
 employment_class_name = 'Employment'
 vehicle_class_name = 'Vehicle'
