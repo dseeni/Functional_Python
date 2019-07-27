@@ -4,7 +4,7 @@ from datetime import datetime
 from collections import namedtuple
 from itertools import starmap
 
-
+# -------------- Goal_1 --------------
 # f to open file read lines -> yield line - Done
 # f open files and read n lines -> yield lines - Done
 # extract header of file -> return header tuple - Done
