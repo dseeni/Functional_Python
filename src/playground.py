@@ -28,3 +28,5 @@ stale_records = list(filter_iter_combined(fnames, class_names, parsers, compress
 print(*list(filter_iter_combined(fnames, class_names, parsers, compress_fields,
                                  key=lambda row: row.last_updated < cut_off_date)), sep='\n')
 
+# -------------- Goal_4 --------------
+
