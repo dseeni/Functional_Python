@@ -68,6 +68,6 @@ def parse_date(value, *, fmt='%Y-%m-%dT%H:%M:%SZ'):
 
 def iter_file(fname, class_name, parser):
     nt_class = create_named_tuple_class(class_name, fname)
-    for row in csv_reader(fname):
+    for row in data_row_extract(fname):
         parsed_data = cast_zipped_row(zip_type_key(row, parser))
         yield nt_class(*parsed_data)
