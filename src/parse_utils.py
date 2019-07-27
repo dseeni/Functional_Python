@@ -105,12 +105,12 @@ def iter_combined_files_data_row(file_names, class_names, parsers, compress_key)
     # you need parsers so you can compress remove the extra ssn keys in the named tuple
     compress_fields = tuple(chain.from_iterable(compress_key))
 
-    # chain together all 4 named tuples into one
+    # chain together all 4 named tuples into one tuple
     # zip(*... this is unpacking the named tuples into a single tuple
     # zipped_tuples returns a tuple of named tuples a row each from 4 files
     zipped_row_tuples = zip(*(iter_file(file_name, class_name, parser)
                             for file_name, class_name, parser in zip(file_names, class_names, parsers)))
-    # print(next(zipped_tuples))
+    # print(next(zipped_row_tuples))
     merged_row = (chain.from_iterable(zipped_row_tuple) for zipped_row_tuple in zipped_row_tuples)
     for row in merged_row:
         compressed_row = compress(row, compress_fields)
@@ -126,4 +126,13 @@ def iter_combined_files(file_names, class_names, parsers, compress_key):
     for row in merged_row:
         compressed_row = compress(row, compress_fields)
         yield combined_nt(*compressed_row)
+
+
+# -------------- Goal_3 --------------
+def filter_iter_combined(file_names, class_names, parsers, compress_key, *, key=None):
+    iter_combo = iter_combined_files(file_names, class_names, parsers, compress_key)
+    yield from filter(key, iter_combo)
+
+
+# -------------- Goal_4 --------------
 

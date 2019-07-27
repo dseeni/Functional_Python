@@ -28,3 +28,6 @@ employment_class_name = 'Employment'
 vehicle_class_name = 'Vehicle'
 update_status_class_name = 'UpdateStatus'
 class_names = personal_class_name, employment_class_name, vehicle_class_name, update_status_class_name
+
+# Cut Off Date
+cut_off_date = parse_date('2017-03-01T00:00:00Z')
