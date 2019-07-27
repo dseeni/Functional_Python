@@ -73,6 +73,14 @@ def iter_file(fname, class_name, parser):
         yield nt_class(*parsed_data)
 
 
+def iter_files(file_names, class_names, parsers_tuple, rowcount):
+    for filename, class_name, parser in zip(file_names, class_names,  parsers_tuple):
+        file_iter = iter_file(filename, class_name, parser)
+        print(filename)
+        for _ in range(rowcount):
+            print(next(file_iter))
+        print()
+
 # -------------- Goal_2 --------------
 # chained 4 data rows from raw extract
 # chained headers from raw header extract
