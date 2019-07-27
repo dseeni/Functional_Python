@@ -1,10 +1,10 @@
-from itertools import islice
+from itertools import islice, compress, chain
 from csv import reader
 from datetime import datetime
 from collections import namedtuple
 from itertools import starmap
 
-
+# -------------- Goal_1 --------------
 # f to open file read lines -> yield line - Done
 # f open files and read n lines -> yield lines - Done
 # extract header of file -> return header tuple - Done
@@ -71,3 +71,39 @@ def iter_file(fname, class_name, parser):
     for row in data_row_extract(fname):
         parsed_data = cast_zipped_row(zip_type_key(row, parser))
         yield nt_class(*parsed_data)
+
+
+def iter_files(file_names, class_names, parsers_tuple, rowcount):
+    for filename, class_name, parser in zip(file_names, class_names,  parsers_tuple):
+        file_iter = iter_file(filename, class_name, parser)
+        print(filename)
+        for _ in range(rowcount):
+            print(next(file_iter))
+        print()
+
+# -------------- Goal_2 --------------
+# chained 4 data rows from raw extract
+# chained headers from raw header extract
+# chained truth values of parsers compressed
+# compress chained headers
+# create named tuple based on chained compressed chained header
+# compressed raw chained data rows with chained parser compress
+# return named combined tuple with combined row
+
+def combined_data_row_extract(file_names):
+    # print([data_row_extract(file_name) for file_name in file_names])
+    combined_data_rows = chain(*(data_row_extract(file_name) for file_name in file_names))
+    yield from combined_data_rows
+
+
+def flatten_combined_data_rows(combined_data_rows):
+    yield chain.from_iterable(next(i) for i in combined_data_rows)
+
+# def compress_chained_keys(parsers, parsers_compress):
+#     chained_parsers = chain(*parsers)
+#     chained_parsers_compressors = chain(*parsers_compress)
+#     return compress(chained_parsers, chained_parsers_compressors)
+
+
+def iter_combine(fnames, class_names, parsers):
+    pass
