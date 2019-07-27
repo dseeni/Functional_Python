@@ -65,3 +65,7 @@ def test_iter_file():
     assert nextrow.ssn == '100-53-9824'
     assert (len(list(iter_file(fnames[0], 'Personal_Info', parsers[0])))) == 1000
     assert list(parsers[0]) == list(type(i) for i in cast_zipped_row(zipped_row))
+
+
+def test_iter_files():
+    iter_files(fnames, class_names, parsers, 10)
