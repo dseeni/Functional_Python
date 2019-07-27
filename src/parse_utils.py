@@ -2,7 +2,6 @@ from itertools import islice, compress, chain
 from csv import reader
 from datetime import datetime
 from collections import namedtuple
-from itertools import starmap, compress
 
 # -------------- Goal_1 --------------
 # f to open file read lines -> yield line - Done
@@ -99,7 +98,7 @@ def create_combined_named_tuple_class(file_names, compress_key):
     # print(len(list(zipped_tuple_headers)))
     compressed_headers = compress(zipped_tuple_headers, compress_fields)
     # print(list(compressed_headers))
-    return namedtuple('combined_named_tuple', compressed_headers)
+    return namedtuple('Data', compressed_headers)
 
 
 def iter_combined_files_data_row(file_names, class_names, parsers, compress_key):
@@ -109,12 +108,22 @@ def iter_combined_files_data_row(file_names, class_names, parsers, compress_key)
     # chain together all 4 named tuples into one
     # zip(*... this is unpacking the named tuples into a single tuple
     # zipped_tuples returns a tuple of named tuples a row each from 4 files
-    zipped_tuples = zip(*(iter_file(file_name, class_name, parser)
-                         for file_name, class_name, parser in zip(file_names, class_names, parsers)))
+    zipped_row_tuples = zip(*(iter_file(file_name, class_name, parser)
+                            for file_name, class_name, parser in zip(file_names, class_names, parsers)))
     # print(next(zipped_tuples))
-    merged_row = (chain.from_iterable(zipped_tuple) for zipped_tuple in zipped_tuples)
+    merged_row = (chain.from_iterable(zipped_row_tuple) for zipped_row_tuple in zipped_row_tuples)
     for row in merged_row:
         compressed_row = compress(row, compress_fields)
         yield tuple(compressed_row)
 
+
+def iter_combined_files(file_names, class_names, parsers, compress_key):
+    combined_nt = create_combined_named_tuple_class(file_names, compress_key)
+    compress_fields = tuple(chain.from_iterable(compress_key))
+    zipped_row_tuples = zip(*(iter_file(file_name, class_name, parser)
+                              for file_name, class_name, parser in zip(file_names, class_names, parsers)))
+    merged_row = (chain.from_iterable(zipped_row_tuple) for zipped_row_tuple in zipped_row_tuples)
+    for row in merged_row:
+        compressed_row = compress(row, compress_fields)
+        yield combined_nt(*compressed_row)
 

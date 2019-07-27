@@ -17,3 +17,5 @@ from itertools import starmap, chain
 row = next(iter_combined_files_data_row(fnames, class_names, parsers, compress_fields))
 
 
+print(*list(iter_combined_files(fnames, class_names, parsers, compress_fields)), sep='\n')
+print(len(list(iter_combined_files(fnames, class_names, parsers, compress_fields))))
