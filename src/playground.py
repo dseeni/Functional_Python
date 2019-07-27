@@ -14,5 +14,6 @@ from itertools import starmap, chain
 # return named combined tuple with combined row
 
 
-print(create_combined_named_tuple_class(fnames, compress_fields))
+row = next(iter_combined_files_data_row(fnames, class_names, parsers, compress_fields))
+
 
