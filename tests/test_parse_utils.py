@@ -69,3 +69,16 @@ def test_iter_file():
 
 def test_iter_files():
     iter_files(fnames, class_names, parsers, 10)
+
+
+def test_create_combined_named_tuple_class():
+    row_tuple = create_combined_named_tuple_class(fnames, compress_fields)
+    datarow = row_tuple(*next(iter_combined_files_data_row(fnames, class_names, parsers, compress_fields)))
+    assert len(datarow) == 13
+    assert datarow.ssn == '100-53-9824'
+
+
+def test_iter_combined_files():
+    datarow = next(iter_combined_files(fnames, class_names, parsers, compress_fields))
+    assert len(datarow) == 13
+    assert datarow.ssn == '100-53-9824'

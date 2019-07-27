@@ -2,7 +2,6 @@ from itertools import islice, compress, chain
 from csv import reader
 from datetime import datetime
 from collections import namedtuple
-from itertools import starmap
 
 # -------------- Goal_1 --------------
 # f to open file read lines -> yield line - Done
@@ -90,20 +89,41 @@ def iter_files(file_names, class_names, parsers_tuple, rowcount):
 # compressed raw chained data rows with chained parser compress
 # return named combined tuple with combined row
 
-def combined_data_row_extract(file_names):
-    # print([data_row_extract(file_name) for file_name in file_names])
-    combined_data_rows = chain(*(data_row_extract(file_name) for file_name in file_names))
-    yield from combined_data_rows
+
+def create_combined_named_tuple_class(file_names, compress_key):
+    # you need parsers so you can compress remove the extra ssn keys in the named tuple
+    compress_fields = chain.from_iterable(compress_key)
+    # print(len(list(compress_fields)))
+    zipped_tuple_headers = chain.from_iterable(header_extract(file_name) for file_name in file_names)
+    # print(len(list(zipped_tuple_headers)))
+    compressed_headers = compress(zipped_tuple_headers, compress_fields)
+    # print(list(compressed_headers))
+    return namedtuple('Data', compressed_headers)
 
 
-def flatten_combined_data_rows(combined_data_rows):
-    yield chain.from_iterable(next(i) for i in combined_data_rows)
+def iter_combined_files_data_row(file_names, class_names, parsers, compress_key):
+    # you need parsers so you can compress remove the extra ssn keys in the named tuple
+    compress_fields = tuple(chain.from_iterable(compress_key))
 
-# def compress_chained_keys(parsers, parsers_compress):
-#     chained_parsers = chain(*parsers)
-#     chained_parsers_compressors = chain(*parsers_compress)
-#     return compress(chained_parsers, chained_parsers_compressors)
+    # chain together all 4 named tuples into one tuple
+    # zip(*... this is unpacking the named tuples into a single tuple
+    # zipped_tuples returns a tuple of named tuples a row each from 4 files
+    zipped_row_tuples = zip(*(iter_file(file_name, class_name, parser)
+                            for file_name, class_name, parser in zip(file_names, class_names, parsers)))
+    # print(next(zipped_row_tuples))
+    merged_row = (chain.from_iterable(zipped_row_tuple) for zipped_row_tuple in zipped_row_tuples)
+    for row in merged_row:
+        compressed_row = compress(row, compress_fields)
+        yield tuple(compressed_row)
 
 
-def iter_combine(fnames, class_names, parsers):
-    pass
+def iter_combined_files(file_names, class_names, parsers, compress_key):
+    combined_nt = create_combined_named_tuple_class(file_names, compress_key)
+    compress_fields = tuple(chain.from_iterable(compress_key))
+    zipped_row_tuples = zip(*(iter_file(file_name, class_name, parser)
+                              for file_name, class_name, parser in zip(file_names, class_names, parsers)))
+    merged_row = (chain.from_iterable(zipped_row_tuple) for zipped_row_tuple in zipped_row_tuples)
+    for row in merged_row:
+        compressed_row = compress(row, compress_fields)
+        yield combined_nt(*compressed_row)
+
