@@ -88,3 +88,11 @@ def test_filter_iter_combined():
     stale_records = list(filter_iter_combined(fnames, class_names, parsers, compress_fields,
                                               key=lambda x: x.last_updated < cut_off_date))
     assert len(stale_records) == 129
+
+
+def test_group_data():
+    for gender in ('Female', 'Male'):
+        results = group_data(fnames, class_names, parsers, compress_fields,
+                             filter_key_composite(cut_off_date, gender), lambda row: row.vehicle_make)
+
+    assert list(results)[0] == ('Ford', 40) or ('Chevrolet', 42)
