@@ -1,6 +1,4 @@
-# Python Deep Dive Part 2 Project 4
-
-### Python Functional Programming using itertools: 
+# Python Functional Programming using itertools: 
 
 - Lazily evaluate multiple files, parsing and sorting with composite keys
     
